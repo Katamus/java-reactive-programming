@@ -5,7 +5,6 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Function;
 
 public class FluxAndMonoGeneratorService {
@@ -73,9 +72,18 @@ public class FluxAndMonoGeneratorService {
         return Mono.just("alex");
     }
 
-    public Mono<String> nameMono_map_filter(int stringLength){
+    public Mono<String> namesMono_map_filter(int stringLength){
         return Mono.just("alex")
                 .filter(s->s.length() > stringLength)
+                .defaultIfEmpty("Default")
+                .map(s->s.toUpperCase());
+    }
+
+    public Mono<String> namesMono_map_filter_switchIfEmpty (int stringLength){
+        Mono<String> swichtMono = Mono.just("Default");
+        return Mono.just("alex")
+                .filter(s->s.length() > stringLength)
+                .switchIfEmpty(swichtMono)
                 .map(s->s.toUpperCase());
     }
 

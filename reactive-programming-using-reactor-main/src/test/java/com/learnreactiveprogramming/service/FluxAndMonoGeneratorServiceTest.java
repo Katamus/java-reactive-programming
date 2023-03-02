@@ -50,7 +50,7 @@ public class FluxAndMonoGeneratorServiceTest {
 
     @Test
     void nameMono_map_filter() {
-        var nameMono = fluxAndMonoGeneratorService.nameMono_map_filter(3);
+        var nameMono = fluxAndMonoGeneratorService.namesMono_map_filter(3);
         StepVerifier.create(nameMono)
                 .expectNext("ALEX")
                 .verifyComplete();
