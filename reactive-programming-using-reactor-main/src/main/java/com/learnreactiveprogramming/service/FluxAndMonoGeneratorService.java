@@ -47,4 +47,18 @@ public class FluxAndMonoGeneratorService {
                     System.out.println("Mono name is : + name");
                 });
     }
+
+    public Flux<String> namesFlux_flatmap(int StringLength){
+        // filter the String whose length is greater than 3
+        return Flux.fromIterable(List.of("alex","ben","chloe"))
+                .map(String::toUpperCase)
+                .filter(s->s.length() > StringLength)
+                .flatMap(s->splitString(s))
+                .log(); // db or a remote service call
+    }
+
+    public Flux<String> splitString(String name){
+        var charArray = name.split("");
+        return Flux.fromArray(charArray);
+    }
 }
