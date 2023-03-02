@@ -45,6 +45,14 @@ public class FluxAndMonoGeneratorService {
                 .log();
     }
 
+    public Flux<String> nameMono_flatmapmany_filter(int stringLength){
+        return Mono.just("alex")
+                .filter(s->s.length() > stringLength)
+                .map(s->s.toUpperCase())
+                .flatMapMany(this::splitString)
+                .log();
+    }
+
     private Mono<List<String>> splitStringMono(String s) {
         var charArray = s.split("");
         var charList = List.of(charArray);

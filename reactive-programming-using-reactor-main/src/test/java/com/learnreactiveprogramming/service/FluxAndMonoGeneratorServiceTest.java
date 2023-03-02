@@ -94,4 +94,15 @@ public class FluxAndMonoGeneratorServiceTest {
                 .expectNext(List.of("A","L","E","X"))
                 .verifyComplete();
     }
+
+    @Test
+    void nameMono_flatmapmany_filter() {
+        int stringLength = 3;
+
+        var value = fluxAndMonoGeneratorService.nameMono_flatmapmany_filter(stringLength);
+
+        StepVerifier.create(value)
+                .expectNext("A","L","E","X")
+                .verifyComplete();
+    }
 }
