@@ -63,4 +63,12 @@ public class FluxAndMonoGeneratorServiceTest {
                 .verifyComplete();
     }
 
+    @Test
+    void namesFlux_flatmap_async() {
+        int stringLength = 3;
+        var namesFlux_flatmap_async = fluxAndMonoGeneratorService.namesFlux_flatmap_async(stringLength);
+        StepVerifier.create(namesFlux_flatmap_async)
+                .expectNextCount(9)
+                .verifyComplete();
+    }
 }
