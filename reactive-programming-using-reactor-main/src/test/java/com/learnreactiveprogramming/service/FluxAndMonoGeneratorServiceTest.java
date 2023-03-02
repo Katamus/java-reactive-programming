@@ -32,9 +32,9 @@ public class FluxAndMonoGeneratorServiceTest {
 
     @Test
     void namesFlux_map() {
-        var namesFlux_map = fluxAndMonoGeneratorService.namesFlux_map();
+        var namesFlux_map = fluxAndMonoGeneratorService.namesFlux_map(3);
         StepVerifier.create(namesFlux_map)
-                .expectNext("ALEX","BEN","CHLOE")
+                .expectNext("4-ALEX","5-CHLOE")
                 .verifyComplete();
     }
 

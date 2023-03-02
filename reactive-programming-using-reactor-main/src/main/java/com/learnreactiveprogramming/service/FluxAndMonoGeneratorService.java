@@ -10,8 +10,13 @@ public class FluxAndMonoGeneratorService {
     public Flux<String> namesFlux(){
         return Flux.fromIterable(List.of("alex","ben","chloe")).log(); // db or a remote service call
     }
-    public Flux<String> namesFlux_map(){
-        return Flux.fromIterable(List.of("alex","ben","chloe")).map(String::toUpperCase).log(); // db or a remote service call
+    public Flux<String> namesFlux_map(int StringLength){
+        // filter the String whose length is greater than 3
+        return Flux.fromIterable(List.of("alex","ben","chloe"))
+                .map(String::toUpperCase)
+                .filter(s->s.length() > StringLength)
+                .map( s-> s.length() + "-"+s)
+                .log(); // db or a remote service call
     }
 
     public Flux<String> namesFlux_inmutability(){
