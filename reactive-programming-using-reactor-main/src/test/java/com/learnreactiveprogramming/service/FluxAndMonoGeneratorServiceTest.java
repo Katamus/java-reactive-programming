@@ -20,4 +20,13 @@ public class FluxAndMonoGeneratorServiceTest {
                 .verifyComplete();
 
     }
+
+
+    @Test
+    void nameMono() {
+        var nameMono = fluxAndMonoGeneratorService.nameMono();
+        StepVerifier.create(nameMono)
+                .expectNext("alex")
+                .verifyComplete();
+    }
 }
