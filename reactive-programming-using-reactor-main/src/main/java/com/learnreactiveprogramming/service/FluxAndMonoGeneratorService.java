@@ -34,6 +34,35 @@ public class FluxAndMonoGeneratorService {
                 .log(); // db or a remote service call
     }
 
+    public Flux<String> namesFlux_DefaulitEmpty(int StringLength){
+
+        Function<Flux<String>,Flux<String>> filterMap = stringFlux -> stringFlux
+                .map(String::toUpperCase)
+                .filter(s->s.length() > StringLength);
+
+        // filter the String whose length is greater than 3
+        return Flux.fromIterable(List.of("alex","ben","chloe"))
+                .transform(filterMap)
+                .defaultIfEmpty("Default")
+                .log(); // db or a remote service call
+    }
+
+    public Flux<String> namesFlux_SwitchitEmpty(int StringLength){
+
+        Function<Flux<String>,Flux<String>> filterMap = stringFlux -> stringFlux
+                .map(String::toUpperCase)
+                .filter(s->s.length() > StringLength);
+
+        Flux<String> switchFlux = Flux.just("DEFAULT");
+
+        // filter the String whose length is greater than 3
+        return Flux.fromIterable(List.of("alex","ben","chloe"))
+                .transform(filterMap)
+                .switchIfEmpty(switchFlux)
+                .flatMap(s -> splitString(s))
+                .log(); // db or a remote service call
+    }
+
     public Flux<String> namesFlux_inmutability(){
         var namesFlux = Flux.fromIterable(List.of("alex","ben","chloe"));
         namesFlux.map(String::toUpperCase).log(); // db or a remote service call
