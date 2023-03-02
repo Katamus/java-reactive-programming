@@ -29,6 +29,12 @@ public class FluxAndMonoGeneratorService {
         return Mono.just("alex");
     }
 
+    public Mono<String> nameMono_map_filter(int stringLength){
+        return Mono.just("alex")
+                .filter(s->s.length() > stringLength)
+                .map(s->s.toUpperCase());
+    }
+
     public static void main(String[] args) {
         FluxAndMonoGeneratorService fluxAndMonoGeneratorService = new FluxAndMonoGeneratorService();
         fluxAndMonoGeneratorService.namesFlux()

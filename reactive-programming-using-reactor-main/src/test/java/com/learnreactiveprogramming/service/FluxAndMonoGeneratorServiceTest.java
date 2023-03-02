@@ -45,4 +45,12 @@ public class FluxAndMonoGeneratorServiceTest {
                 .expectNext("alex","ben","chloe")
                 .verifyComplete();
     }
+
+    @Test
+    void nameMono_map_filter() {
+        var nameMono = fluxAndMonoGeneratorService.nameMono_map_filter(3);
+        StepVerifier.create(nameMono)
+                .expectNext("ALEX")
+                .verifyComplete();
+    }
 }
