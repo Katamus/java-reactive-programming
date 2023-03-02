@@ -71,4 +71,14 @@ public class FluxAndMonoGeneratorServiceTest {
                 .expectNextCount(9)
                 .verifyComplete();
     }
+
+    @Test
+    void namesFlux_concatmap() {
+
+        int stringLength = 3;
+        var namesFlux_concatmap = fluxAndMonoGeneratorService.namesFlux_concatmap(stringLength);
+        StepVerifier.create(namesFlux_concatmap)
+                .expectNext("A","L","E","X","C","H","L","O","E")
+                .verifyComplete();
+    }
 }
