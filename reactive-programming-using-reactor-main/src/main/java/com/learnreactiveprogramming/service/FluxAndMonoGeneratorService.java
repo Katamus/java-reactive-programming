@@ -165,7 +165,7 @@ public class FluxAndMonoGeneratorService {
 
         var defFlux = Flux.just("D","E","F");
 
-        return defFlux.zipWith(abcFlux,(first, second) -> first+second).log();
+        return abcFlux.zipWith(defFlux,(first, second) -> first+second).log();
 
     }
 
