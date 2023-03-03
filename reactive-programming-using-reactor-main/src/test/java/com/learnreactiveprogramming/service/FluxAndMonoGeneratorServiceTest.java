@@ -145,4 +145,20 @@ public class FluxAndMonoGeneratorServiceTest {
                 .verifyComplete();
 
     }
+
+    @Test
+    void explore_concatWith() {
+        var explore_concatWith = fluxAndMonoGeneratorService.explore_concatWith();
+        StepVerifier.create(explore_concatWith)
+                .expectNext("A","B","C","D","E","F")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_concatWith_mono() {
+        var explore_concatWith_mono = fluxAndMonoGeneratorService.explore_concatWith_mono();
+        StepVerifier.create(explore_concatWith_mono)
+                .expectNext("A","B")
+                .verifyComplete();
+    }
 }
