@@ -33,4 +33,20 @@ class MovieReactiveServiceTest {
                 .verifyComplete();
 
     }
+
+    @Test
+    void getMovieById() {
+
+        Long movieId = 100L;
+
+        var movieMono = movieReactiveService.getMovieById(movieId);
+
+        StepVerifier.create(movieMono)
+                .assertNext(movie -> {
+                    assertEquals("Batman Begins", movie.getMovie().getName());
+                    assertEquals(2,movie.getReviewList().size());
+                })
+                .verifyComplete();
+
+    }
 }
