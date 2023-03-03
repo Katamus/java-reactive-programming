@@ -147,7 +147,7 @@ public class FluxAndMonoGeneratorService {
 
         var bMono = Mono.just("B");
 
-        return abcFlux.mergeWith(defFlux);
+        return aMono.mergeWith(bMono);
 
     }
 

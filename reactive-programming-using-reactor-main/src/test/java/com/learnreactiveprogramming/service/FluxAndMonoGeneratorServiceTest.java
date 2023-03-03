@@ -171,4 +171,20 @@ public class FluxAndMonoGeneratorServiceTest {
                 .expectNext("A","D","B","E","C","F")
                 .verifyComplete();
     }
+
+    @Test
+    void explore_mergeWith() {
+        var value = fluxAndMonoGeneratorService.explore_mergeWith();
+        StepVerifier.create(value)
+                .expectNext("A","D","B","E","C","F")
+                .verifyComplete();
+    }
+
+    @Test
+    void explore_mergetWith_mono() {
+        var explore_merge_mono = fluxAndMonoGeneratorService.explore_merge_mono();
+        StepVerifier.create(explore_merge_mono)
+                .expectNext("A","B")
+                .verifyComplete();
+    }
 }
