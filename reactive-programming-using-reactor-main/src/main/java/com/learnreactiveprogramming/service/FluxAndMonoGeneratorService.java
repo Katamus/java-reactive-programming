@@ -97,6 +97,30 @@ public class FluxAndMonoGeneratorService {
 
     }
 
+    public Flux<String> explore_merge(){
+
+        var abcFlux = Flux.just("A","B","C")
+                .delayElements(Duration.ofMillis(100));
+
+        var defFlux = Flux.just("D","E","F")
+                .delayElements(Duration.ofMillis(125));
+
+        return Flux.merge(abcFlux,defFlux).log();
+
+    }
+
+    public Flux<String> explore_mergeWith(){
+
+        var abcFlux = Flux.just("A","B","C")
+                .delayElements(Duration.ofMillis(100));
+
+        var defFlux = Flux.just("D","E","F")
+                .delayElements(Duration.ofMillis(125));
+
+        return abcFlux.mergeWith(defFlux).log();
+
+    }
+
     public Flux<String> explore_concatWith(){
 
         var abcFlux = Flux.just("A","B","C");
@@ -109,11 +133,21 @@ public class FluxAndMonoGeneratorService {
 
     public Flux<String> explore_concatWith_mono(){
 
-        var abcFlux = Mono.just("A");
+        var aMono = Mono.just("A");
 
-        var defFlux = Mono.just("B");
+        var bMono = Mono.just("B");
 
-        return abcFlux.concatWith(defFlux);
+        return aMono.concatWith(bMono);
+
+    }
+
+    public Flux<String> explore_merge_mono(){
+
+        var aMono = Mono.just("A");
+
+        var bMono = Mono.just("B");
+
+        return abcFlux.mergeWith(defFlux);
 
     }
 
