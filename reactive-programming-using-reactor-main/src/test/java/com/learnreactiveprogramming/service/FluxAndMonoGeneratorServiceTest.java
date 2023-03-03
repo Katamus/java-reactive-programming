@@ -137,4 +137,12 @@ public class FluxAndMonoGeneratorServiceTest {
     }
 
 
+    @Test
+    void explore_concat() {
+        var explore_concat = fluxAndMonoGeneratorService.explore_concat();
+        StepVerifier.create(explore_concat)
+                .expectNext("A","B","C","D","E","F")
+                .verifyComplete();
+
+    }
 }

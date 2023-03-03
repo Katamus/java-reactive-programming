@@ -87,6 +87,36 @@ public class FluxAndMonoGeneratorService {
                 .map(s->s.toUpperCase());
     }
 
+    public Flux<String> explore_concat(){
+
+        var abcFlux = Flux.just("A","B","C");
+
+        var defFlux = Flux.just("D","E","F");
+
+        return Flux.concat(abcFlux,defFlux);
+
+    }
+
+    public Flux<String> explore_concatWith(){
+
+        var abcFlux = Flux.just("A","B","C");
+
+        var defFlux = Flux.just("D","E","F");
+
+        return abcFlux.concatWith(defFlux);
+
+    }
+
+    public Flux<String> explore_concatWith_mono(){
+
+        var abcFlux = Mono.just("A");
+
+        var defFlux = Mono.just("B");
+
+        return abcFlux.concatWith(defFlux);
+
+    }
+
     public Mono<List<String>> nameMono_flatmap_filter(int stringLength){
         return Mono.just("alex")
                 .filter(s->s.length() > stringLength)
