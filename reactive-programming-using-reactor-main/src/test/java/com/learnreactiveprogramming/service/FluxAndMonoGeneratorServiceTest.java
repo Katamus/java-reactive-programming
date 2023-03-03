@@ -187,4 +187,15 @@ public class FluxAndMonoGeneratorServiceTest {
                 .expectNext("A","B")
                 .verifyComplete();
     }
+
+    @Test
+    void explore_mergeSequential() {
+
+        var value = fluxAndMonoGeneratorService.explore_mergeSequential();
+        StepVerifier.create(value)
+                .expectNext("A","B","C","D","E","F")
+                .verifyComplete();
+
+    }
+
 }

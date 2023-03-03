@@ -121,6 +121,18 @@ public class FluxAndMonoGeneratorService {
 
     }
 
+    public Flux<String> explore_mergeSequential(){
+
+        var abcFlux = Flux.just("A","B","C")
+                .delayElements(Duration.ofMillis(100));
+
+        var defFlux = Flux.just("D","E","F")
+                .delayElements(Duration.ofMillis(125));
+
+        return Flux.mergeSequential(abcFlux,defFlux).log();
+
+    }
+
     public Flux<String> explore_concatWith(){
 
         var abcFlux = Flux.just("A","B","C");
