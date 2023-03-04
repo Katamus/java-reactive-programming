@@ -1,5 +1,6 @@
 package com.learnreactiveprogramming.service;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -7,6 +8,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.function.Function;
 
+@Slf4j
 public class FluxAndMonoGeneratorService {
 
     public Flux<String> namesFlux(){
@@ -292,7 +294,31 @@ public class FluxAndMonoGeneratorService {
                 .concatWith(Flux.just("D"));
     }
 
+    public Flux<String> explore_OnErrorReturn(){
 
+        return Flux.just("A","B","C")
+                .concatWith(Flux.error(new RuntimeException("Exception Occurred")))
+                .onErrorReturn("D")
+                .log();
+    }
+
+    public Flux<String> explore_OnErrorResume(Exception e){
+
+        var recoveryFlux = Flux.just("D","E","F");
+
+        return Flux.just("A","B","C")
+                .concatWith(Flux.error(e))
+                .onErrorResume(ex -> {
+                    if(e instanceof IllegalAccessException){
+                        log.error("Exception is ", ex);
+                        return recoveryFlux;
+                    }else{
+                        return Flux.error(e);
+                    }
+
+                })
+                .log();
+    }
 
 
     public Flux<String> splitString(String name){
