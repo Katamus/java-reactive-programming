@@ -18,6 +18,18 @@ public class FluxAndMonoGeneratorService {
                 .map(String::toUpperCase)
                 .filter(s->s.length() > StringLength)
                 .map( s-> s.length() + "-"+s)
+                .doOnNext(s -> {
+                    System.out.println(s);
+                })
+                .doOnSubscribe(s->{
+                    System.out.println("Subscription is : "+s);
+                })
+                .doOnComplete(() -> {
+                    System.out.println("Inside the complete callback");
+                })
+                .doFinally(signalType -> {
+                    System.out.println("inside dofinally : "+ signalType);
+                })
                 .log(); // db or a remote service call
     }
 
