@@ -295,5 +295,14 @@ public class FluxAndMonoGeneratorServiceTest {
 
     }
 
+    @Test
+    void explore_OnErrorContinue(){
+        var value = fluxAndMonoGeneratorService.explore_OnErrorContinue();
+        StepVerifier
+                .create(value)
+                .expectNext("A","C","D")
+                .verifyComplete();
+    }
+
 
 }

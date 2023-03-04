@@ -320,6 +320,25 @@ public class FluxAndMonoGeneratorService {
                 .log();
     }
 
+    public Flux<String> explore_OnErrorContinue(){
+
+        var recoveryFlux = Flux.just("D","E","F");
+
+        return Flux.just("A","B","C")
+                .map(name-> {
+                    if(name.equals("B"))
+                        throw new IllegalStateException("Exception Occurred");
+
+                    return name;
+                })
+                .concatWith(Flux.just("D"))
+                .onErrorContinue((ex, name) -> {
+                    log.error("Exception is ", ex);
+                    log.info("name is {}",name);
+                })
+                .log();
+    }
+
 
     public Flux<String> splitString(String name){
         var charArray = name.split("");
@@ -331,4 +350,7 @@ public class FluxAndMonoGeneratorService {
         var delay = 1000;
         return Flux.fromArray(charArray).delayElements(Duration.ofMillis(delay));
     }
+
+
+
 }
