@@ -285,6 +285,16 @@ public class FluxAndMonoGeneratorService {
                 .log(); // db or a remote service call
     }
 
+    public Flux<String> exception_flux(){
+
+        return Flux.just("A","B","C")
+                .concatWith(Flux.error(new RuntimeException("Exception Occurred")))
+                .concatWith(Flux.just("D"));
+    }
+
+
+
+
     public Flux<String> splitString(String name){
         var charArray = name.split("");
         return Flux.fromArray(charArray);
