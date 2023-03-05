@@ -1,5 +1,6 @@
 package com.learnreactiveprogramming.service;
 
+import com.learnreactiveprogramming.exception.ReactorException;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -335,6 +336,25 @@ public class FluxAndMonoGeneratorService {
                 .onErrorContinue((ex, name) -> {
                     log.error("Exception is ", ex);
                     log.info("name is {}",name);
+                })
+                .log();
+    }
+
+    public Flux<String> explore_OnErrorMap(){
+
+        var recoveryFlux = Flux.just("D","E","F");
+
+        return Flux.just("A","B","C")
+                .map(name-> {
+                    if(name.equals("B"))
+                        throw new IllegalStateException("Exception Occurred");
+
+                    return name;
+                })
+                .concatWith(Flux.just("D"))
+                .onErrorMap(ex -> {
+                    log.error("Exception is", ex);
+                    return new ReactorException(ex,ex.getMessage());
                 })
                 .log();
     }
