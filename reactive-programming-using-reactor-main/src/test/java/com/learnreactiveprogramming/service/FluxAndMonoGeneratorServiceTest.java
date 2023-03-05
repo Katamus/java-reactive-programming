@@ -2,6 +2,7 @@ package com.learnreactiveprogramming.service;
 
 import com.learnreactiveprogramming.exception.ReactorException;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.List;
@@ -326,6 +327,17 @@ public class FluxAndMonoGeneratorServiceTest {
 
     }
 
+    @Test
+    void  explore_Mono_OnErrorReturn(){
+        var value = fluxAndMonoGeneratorService.explore_Mono_OnErrorReturn();
+
+        StepVerifier.create(value)
+                .expectNext("abc")
+                .verifyComplete();
+
+    }
 
 
-}
+
+
+    }

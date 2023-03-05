@@ -367,6 +367,13 @@ public class FluxAndMonoGeneratorService {
                 }).log();
     }
 
+    public Mono<Object> explore_Mono_OnErrorReturn(){
+        return Mono.just("A")
+                .map(value -> {
+                    throw new RuntimeException("Exception Occurred");
+                }).onErrorReturn("abc").log();
+    }
+
 
     public Flux<String> splitString(String name){
         var charArray = name.split("");
