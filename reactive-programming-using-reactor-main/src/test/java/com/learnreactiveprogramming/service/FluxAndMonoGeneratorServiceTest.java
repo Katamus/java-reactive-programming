@@ -314,6 +314,18 @@ public class FluxAndMonoGeneratorServiceTest {
                 .verify();
     }
 
+    @Test
+    void explore_doOnError(){
+
+        var value = fluxAndMonoGeneratorService.explore_doOnError();
+
+        StepVerifier.create(value)
+                .expectNext("A","B","C")
+                .expectError(IllegalStateException.class)
+                .verify();
+
+    }
+
 
 
 }
