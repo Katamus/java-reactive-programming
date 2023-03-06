@@ -36,6 +36,23 @@ public class MovieReactiveService {
                 .log();
     }
 
+    public Flux<Movie> getAllMovies_retry(){
+
+        var moviesInfoFlux = movieInfoService.retrieveMoviesFlux();
+        return moviesInfoFlux
+                .flatMap(movieInfo -> {
+                    Mono<List<Review>> reviewsMono = reviewService.retrieveReviewsFlux(movieInfo.getMovieInfoId())
+                            .collectList();
+                    return reviewsMono.map(reviewsList -> new Movie(movieInfo,reviewsList));
+                })
+                .onErrorMap((ex)->{
+                    log.error("Exception is : ", ex);
+                    throw new MovieException(ex.getMessage());
+                })
+                .retry(3)
+                .log();
+    }
+
     public Mono<Movie> getMovieById(long movieId){
 
         var moviesInfoMono = movieInfoService.retrieveMovieInfoMonoUsingId(movieId);
