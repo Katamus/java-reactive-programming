@@ -10,6 +10,7 @@ import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
+import reactor.util.retry.RetryBackoffSpec;
 
 import java.time.Duration;
 import java.util.List;
@@ -76,6 +77,49 @@ public class MovieReactiveService {
                 .log();
     }
 
+    public Flux<Movie> getAllMovies_repeat(){
+
+        var moviesInfoFlux = movieInfoService.retrieveMoviesFlux();
+        return moviesInfoFlux
+                .flatMap(movieInfo -> {
+                    Mono<List<Review>> reviewsMono = reviewService.retrieveReviewsFlux(movieInfo.getMovieInfoId())
+                            .collectList();
+                    return reviewsMono.map(reviewsList -> new Movie(movieInfo,reviewsList));
+                })
+                .onErrorMap((ex)->{
+                    log.error("Exception is : ", ex);
+                    if(ex instanceof NetworkException)
+                        throw new MovieException(ex.getMessage());
+                    else
+                        throw new ServiceException(ex.getMessage());
+                })
+                .retryWhen(getRetryBackoffSpec())
+                .repeat()
+                .log();
+    }
+
+    public Flux<Movie> getAllMovies_repeat_n(long n){
+
+        var moviesInfoFlux = movieInfoService.retrieveMoviesFlux();
+        return moviesInfoFlux
+                .flatMap(movieInfo -> {
+                    Mono<List<Review>> reviewsMono = reviewService.retrieveReviewsFlux(movieInfo.getMovieInfoId())
+                            .collectList();
+                    return reviewsMono.map(reviewsList -> new Movie(movieInfo,reviewsList));
+                })
+                .onErrorMap((ex)->{
+                    log.error("Exception is : ", ex);
+                    if(ex instanceof NetworkException)
+                        throw new MovieException(ex.getMessage());
+                    else
+                        throw new ServiceException(ex.getMessage());
+                })
+                .retryWhen(getRetryBackoffSpec())
+                .repeat(n)
+                .log();
+    }
+
+
     public Mono<Movie> getMovieById_flatMap(long movieId){
 
         return  movieInfoService
@@ -85,5 +129,14 @@ public class MovieReactiveService {
                     return reviews.map(reviews1 -> new Movie(movieInfo,reviews1));
                 });
 
+    }
+
+
+    public RetryBackoffSpec getRetryBackoffSpec(){
+        return  Retry.fixedDelay(3 , Duration.ofMillis(500))
+                .filter(throwable -> throwable instanceof MovieException )
+                .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) ->
+                        Exceptions.propagate(retrySignal.failure()
+                        ));
     }
 }
