@@ -3,10 +3,15 @@ package com.learnreactiveprogramming.service;
 import com.learnreactiveprogramming.domain.Movie;
 import com.learnreactiveprogramming.domain.Review;
 import com.learnreactiveprogramming.exception.MovieException;
+import com.learnreactiveprogramming.exception.NetworkException;
+import com.learnreactiveprogramming.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.util.List;
 
 @Slf4j
@@ -36,7 +41,22 @@ public class MovieReactiveService {
                 .log();
     }
 
-    public Flux<Movie> getAllMovies_retry(){
+
+
+    public Mono<Movie> getMovieById(long movieId){
+
+        var moviesInfoMono = movieInfoService.retrieveMovieInfoMonoUsingId(movieId);
+        var reviewsFlux = reviewService.retrieveReviewsFlux(movieId).collectList();
+        return moviesInfoMono.zipWith(reviewsFlux,(movieInfo,reviews)-> new Movie(movieInfo,reviews));
+    }
+
+    public Flux<Movie> getAllMovies_retryWhen(){
+
+        var retryWhen = Retry.fixedDelay(3 , Duration.ofMillis(500))
+                .filter(throwable -> throwable instanceof MovieException )
+                .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) ->
+                        Exceptions.propagate(retrySignal.failure()
+                        ));
 
         var moviesInfoFlux = movieInfoService.retrieveMoviesFlux();
         return moviesInfoFlux
@@ -47,17 +67,13 @@ public class MovieReactiveService {
                 })
                 .onErrorMap((ex)->{
                     log.error("Exception is : ", ex);
-                    throw new MovieException(ex.getMessage());
+                    if(ex instanceof NetworkException)
+                        throw new MovieException(ex.getMessage());
+                    else
+                        throw new ServiceException(ex.getMessage());
                 })
-                .retry(3)
+                .retryWhen(retryWhen)
                 .log();
-    }
-
-    public Mono<Movie> getMovieById(long movieId){
-
-        var moviesInfoMono = movieInfoService.retrieveMovieInfoMonoUsingId(movieId);
-        var reviewsFlux = reviewService.retrieveReviewsFlux(movieId).collectList();
-        return moviesInfoMono.zipWith(reviewsFlux,(movieInfo,reviews)-> new Movie(movieInfo,reviews));
     }
 
     public Mono<Movie> getMovieById_flatMap(long movieId){

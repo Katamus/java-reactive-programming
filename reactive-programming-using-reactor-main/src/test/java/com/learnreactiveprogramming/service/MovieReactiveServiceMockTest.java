@@ -1,13 +1,23 @@
 package com.learnreactiveprogramming.service;
 
+import com.learnreactiveprogramming.domain.Movie;
+import com.learnreactiveprogramming.domain.Review;
 import com.learnreactiveprogramming.exception.MovieException;
+import com.learnreactiveprogramming.exception.NetworkException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.Exceptions;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+import reactor.util.retry.Retry;
+
+import java.time.Duration;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -72,7 +82,7 @@ class MovieReactiveServiceMockTest {
 
         Mockito.when(reviewService.retrieveReviewsFlux(anyLong())).thenThrow(new RuntimeException(erroMessage));
 
-        var moviesFlux = reactiveMovieService.getAllMovies_retry();
+        var moviesFlux = reactiveMovieService.getAllMovies_retryWhen();
 
         StepVerifier.create(moviesFlux)
                 //.expectError(MovieException.class)
@@ -82,5 +92,28 @@ class MovieReactiveServiceMockTest {
         verify(reviewService,times(4))
                 .retrieveReviewsFlux(isA(Long.class));
     }
+
+    @Test
+    void getAllMovies_retryWhen(){
+
+        var erroMessage = "Exception occurred in ReviewService";
+
+        Mockito.when(movieInfoService.retrieveMoviesFlux()).thenCallRealMethod();
+
+        Mockito.when(reviewService.retrieveReviewsFlux(anyLong())).thenThrow(new NetworkException(erroMessage));
+
+        var moviesFlux = reactiveMovieService.getAllMovies_retryWhen();
+
+        StepVerifier.create(moviesFlux)
+                //.expectError(MovieException.class)
+                .expectErrorMessage(erroMessage)
+                .verify();
+
+        verify(reviewService,times(4))
+                .retrieveReviewsFlux(isA(Long.class));
+    }
+
+
+
 
 }
