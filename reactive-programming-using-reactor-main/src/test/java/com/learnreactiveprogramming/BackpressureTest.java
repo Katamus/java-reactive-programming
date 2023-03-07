@@ -7,6 +7,11 @@ import reactor.core.publisher.BaseSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.SignalType;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @Slf4j
 public class BackpressureTest {
 
@@ -17,12 +22,10 @@ public class BackpressureTest {
 
         numbreRange
                 .subscribe(new BaseSubscriber<Integer>() {
-
                     @Override
                     protected void hookOnSubscribe(Subscription subscription) {
                         request(2);
                     }
-
                     @Override
                     protected void hookOnNext(Integer value) {
                         log.info("hookOnNext : {}",value);
@@ -30,53 +33,68 @@ public class BackpressureTest {
                             cancel();
                         }
                     }
-
                     @Override
                     protected void hookOnCancel() {
                         log.info("Inside OnCancel");
                     }
                     @Override
-                    protected Subscription upstream() {
-                        return super.upstream();
-                    }
-
-                    @Override
-                    public boolean isDisposed() {
-                        return super.isDisposed();
-                    }
-
-                    @Override
-                    public void dispose() {
-                        super.dispose();
-                    }
-
-
-
-                    @Override
                     protected void hookOnComplete() {
                         super.hookOnComplete();
                     }
-
                     @Override
                     protected void hookOnError(Throwable throwable) {
                         super.hookOnError(throwable);
                     }
-
-
-
                     @Override
                     protected void hookFinally(SignalType type) {
                         super.hookFinally(type);
-                    }
-
-                    @Override
-                    public String toString() {
-                        return super.toString();
                     }
                 });
             //.subscribe(num -> {
             //    log.info("Number is : {} ", num);
             //});
 
+    }
+
+    @Test
+    void testBackPressure_1() throws InterruptedException {
+        var numbreRange = Flux.range(1,100).log();
+        CountDownLatch latch = new CountDownLatch(1);
+        numbreRange
+                .subscribe(new BaseSubscriber<Integer>() {
+                    @Override
+                    protected void hookOnSubscribe(Subscription subscription) {
+                        request(2);
+                    }
+                    @Override
+                    protected void hookOnNext(Integer value) {
+                        log.info("hookOnNext : {}",value);
+                        if(value % 2 == 0 && value < 50){
+                           request(2);
+                        }else{
+                            cancel();
+                        }
+                    }
+                    @Override
+                    protected void hookOnCancel() {
+                        log.info("Inside OnCancel");
+                        latch.countDown();
+                    }
+                    @Override
+                    protected void hookOnComplete() {
+                        super.hookOnComplete();
+                    }
+                    @Override
+                    protected void hookOnError(Throwable throwable) {
+                        super.hookOnError(throwable);
+                    }
+
+                    @Override
+                    protected void hookFinally(SignalType type) {
+                        super.hookFinally(type);
+                    }
+                });
+
+        assertTrue(latch.await(5L, TimeUnit.SECONDS));
     }
 }
