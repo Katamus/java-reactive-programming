@@ -19,4 +19,15 @@ class FluxAndMonoSchedulersServiceTest {
                 .verifyComplete();
 
     }
+
+    @Test
+    void explore_subscribeOn() {
+
+        var flux = fluxAndMonoSchedulersService.explore_subscribeOn();
+
+        StepVerifier.create(flux)
+                .expectNextCount(6)
+                .verifyComplete();
+
+    }
 }
