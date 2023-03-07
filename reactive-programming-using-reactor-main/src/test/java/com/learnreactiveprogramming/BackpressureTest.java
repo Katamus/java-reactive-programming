@@ -97,4 +97,47 @@ public class BackpressureTest {
 
         assertTrue(latch.await(5L, TimeUnit.SECONDS));
     }
+
+
+    @Test
+    void testBackPressure_drop() throws InterruptedException {
+        var numbreRange = Flux.range(1,100).log();
+        CountDownLatch latch = new CountDownLatch(1);
+
+        numbreRange.onBackpressureDrop(item -> {
+            log.info("Dropped Items are : {}", item);
+        }).subscribe(new BaseSubscriber<Integer>() {
+                    @Override
+                    protected void hookOnSubscribe(Subscription subscription) {
+                        request(2);
+                    }
+                    @Override
+                    protected void hookOnNext(Integer value) {
+                        log.info("hookOnNext : {}",value);
+                        if(value == 2 ){
+                            hookOnCancel();
+                        }
+                    }
+                    @Override
+                    protected void hookOnCancel() {
+                        log.info("Inside OnCancel");
+                        latch.countDown();
+                    }
+                    @Override
+                    protected void hookOnComplete() {
+                        super.hookOnComplete();
+                    }
+                    @Override
+                    protected void hookOnError(Throwable throwable) {
+                        super.hookOnError(throwable);
+                    }
+
+                    @Override
+                    protected void hookFinally(SignalType type) {
+                        super.hookFinally(type);
+                    }
+                });
+
+        assertTrue(latch.await(5L, TimeUnit.SECONDS));
+    }
 }
