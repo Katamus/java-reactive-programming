@@ -2,7 +2,7 @@ package com.learnreactiveprogramming.service;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Scheduler;
+import reactor.core.publisher.ParallelFlux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
@@ -32,6 +32,15 @@ public class FluxAndMonoSchedulersService {
                 .log();
 
         return namesFlux.mergeWith(namesFlux1);
+    }
+
+
+    public ParallelFlux<String> explore_parallel(){
+        return Flux.fromIterable(namesList)
+                .parallel()
+                .runOn(Schedulers.boundedElastic())
+                .map(this::upperCase)
+                .log();
     }
 
     public Flux<String> explore_subscribeOn(){

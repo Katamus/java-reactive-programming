@@ -1,10 +1,12 @@
 package com.learnreactiveprogramming.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 class FluxAndMonoSchedulersServiceTest {
 
     FluxAndMonoSchedulersService fluxAndMonoSchedulersService = new FluxAndMonoSchedulersService();
@@ -29,5 +31,19 @@ class FluxAndMonoSchedulersServiceTest {
                 .expectNextCount(6)
                 .verifyComplete();
 
+    }
+
+    @Test
+    void explore_parallel() {
+
+        var flux = fluxAndMonoSchedulersService.explore_parallel();
+
+        var noOfCores = Runtime.getRuntime().availableProcessors();
+        
+        log.info("noOfCores : {} ",noOfCores);
+
+        StepVerifier.create(flux)
+                .expectNextCount(3)
+                .verifyComplete();
     }
 }
