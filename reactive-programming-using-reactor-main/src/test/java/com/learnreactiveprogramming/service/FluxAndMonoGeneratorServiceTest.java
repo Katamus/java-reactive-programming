@@ -405,4 +405,15 @@ public class FluxAndMonoGeneratorServiceTest {
 
     }
 
+
+    @Test
+    void explore_handle() {
+
+        var value = fluxAndMonoGeneratorService.explore_handle().log();
+
+        StepVerifier.create(value)
+                .expectNextCount(2)
+                .verifyComplete();
+
+    }
 }

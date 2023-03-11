@@ -427,6 +427,15 @@ public class FluxAndMonoGeneratorService {
         });
     }
 
+    public Flux<String> explore_handle(){
+        return Flux.fromIterable(List.of("alex","ben","chloe"))
+                .handle((s, stringSynchronousSink) -> {
+                    if (s.length() >3){
+                        stringSynchronousSink.next(s.toUpperCase());
+                    }
+                });
+    }
+
     public void sendEvents(FluxSink<String> sink){
 
             CompletableFuture.supplyAsync(() -> names())
