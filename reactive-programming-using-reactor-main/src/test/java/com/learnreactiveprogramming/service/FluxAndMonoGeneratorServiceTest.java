@@ -6,6 +6,7 @@ import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import reactor.test.scheduler.VirtualTimeScheduler;
+import reactor.tools.agent.ReactorDebugAgent;
 
 import java.time.Duration;
 import java.util.List;
@@ -336,6 +337,22 @@ public class FluxAndMonoGeneratorServiceTest {
 
     @Test
     void explore_OnErrorMap_onOperatorDebug(){
+
+        //Hooks.onOperatorDebug();
+        var e = new RuntimeException("Not a valid State");
+
+        var value = fluxAndMonoGeneratorService.explore_OnErrorMap(e);
+        StepVerifier.create(value)
+                .expectNext("A")
+                .expectError(ReactorException.class)
+                .verify();
+    }
+
+    @Test
+    void explore_OnErrorMap_reactorDebugAgent(){
+
+        ReactorDebugAgent.init();
+        ReactorDebugAgent.processExistingClasses();
 
         //Hooks.onOperatorDebug();
         var e = new RuntimeException("Not a valid State");
