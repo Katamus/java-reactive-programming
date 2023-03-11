@@ -421,6 +421,12 @@ public class FluxAndMonoGeneratorService {
         });
     }
 
+    public Mono<String> explore_create_mono(){
+        return Mono.create(stringFluxSink -> {
+            stringFluxSink.success("alex");
+        });
+    }
+
     public void sendEvents(FluxSink<String> sink){
 
             CompletableFuture.supplyAsync(() -> names())

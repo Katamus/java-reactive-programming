@@ -393,4 +393,16 @@ public class FluxAndMonoGeneratorServiceTest {
                 .verifyComplete();
 
     }
+
+    @Test
+    void explore_create_mono() {
+
+        var value = fluxAndMonoGeneratorService.explore_create_mono().log();
+
+        StepVerifier.create(value)
+                .expectNext("alex")
+                .verifyComplete();
+
+    }
+
 }
