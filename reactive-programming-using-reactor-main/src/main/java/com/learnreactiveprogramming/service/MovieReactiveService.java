@@ -75,6 +75,13 @@ public class MovieReactiveService {
         return moviesInfoMono.zipWith(reviewsFlux,(movieInfo,reviews)-> new Movie(movieInfo,reviews));
     }
 
+    public Mono<Movie> getMovieById_RestClient(long movieId){
+
+        var moviesInfoMono = movieInfoService.retrieveAMovieInfoById_RestClient(movieId);
+        var reviewsFlux = reviewService.retrieveReviewsFlux_RestCliente(movieId).collectList();
+        return moviesInfoMono.zipWith(reviewsFlux,(movieInfo,reviews)-> new Movie(movieInfo,reviews));
+    }
+
     public Mono<Movie> getMovieById_withRevenenue(long movieId){
 
         var moviesInfoMono = movieInfoService.retrieveMovieInfoMonoUsingId(movieId);
