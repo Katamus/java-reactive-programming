@@ -337,7 +337,7 @@ public class FluxAndMonoGeneratorServiceTest {
     @Test
     void explore_OnErrorMap_onOperatorDebug(){
 
-        Hooks.onOperatorDebug();
+        //Hooks.onOperatorDebug();
         var e = new RuntimeException("Not a valid State");
 
         var value = fluxAndMonoGeneratorService.explore_OnErrorMap(e);
