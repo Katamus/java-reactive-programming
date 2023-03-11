@@ -32,4 +32,42 @@ public class ColdAndHotPublisherTest {
         delay(10000);
     }
 
+    @Test
+    void gotPlubliserTest_autoConnect(){
+        var flux = Flux.range(1,10)
+                .delayElements(Duration.ofSeconds(1));
+
+        var hotSource = flux.publish().autoConnect(2);
+
+        hotSource.subscribe(x-> System.out.println("Subscriber 1 : " + x));
+        delay(2000);
+        hotSource.subscribe(x-> System.out.println("Subscriber 2 : " + x));
+        delay(2000);
+        hotSource.subscribe(x-> System.out.println("Subscriber 3 : " + x));
+        delay(10000);
+    }
+
+    @Test
+    void gotPlubliserTest_refCount(){
+        var flux = Flux.range(1,10)
+                .delayElements(Duration.ofSeconds(1))
+                .doOnCancel(()->{
+                    System.out.println("Received Cancel Signal");
+                });
+
+        var hotSource = flux.publish().refCount(2);
+
+        var disposable = hotSource.subscribe(x-> System.out.println("Subscriber 1 : " + x));
+        delay(2000);
+        var disposable1 = hotSource.subscribe(x-> System.out.println("Subscriber 2 : " + x));
+        delay(2000);
+
+        disposable.dispose();
+        disposable1.dispose();
+        hotSource.subscribe(x-> System.out.println("Subscriber 3 : " + x));
+        delay(2000);
+
+        hotSource.subscribe(x-> System.out.println("Subscriber 4 : " + x));
+        delay(10000);
+    }
 }
