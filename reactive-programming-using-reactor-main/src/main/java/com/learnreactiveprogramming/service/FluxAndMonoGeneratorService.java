@@ -410,6 +410,16 @@ public class FluxAndMonoGeneratorService {
         return Flux.fromArray(charArray).delayElements(Duration.ofMillis(delay));
     }
 
+    public Flux<Integer> explore_generate(){
 
+        return Flux.generate(() -> 1,(integer, integerSynchronousSink) -> {
+            integerSynchronousSink.next(integer*2);
+            if(integer == 10 ){
+                integerSynchronousSink.complete();
+            }
+            return integer+1;
+        });
+
+    }
 
 }
