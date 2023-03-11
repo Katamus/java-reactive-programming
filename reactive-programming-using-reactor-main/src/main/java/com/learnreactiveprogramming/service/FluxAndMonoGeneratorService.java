@@ -3,11 +3,15 @@ package com.learnreactiveprogramming.service;
 import com.learnreactiveprogramming.exception.ReactorException;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+
+import static com.learnreactiveprogramming.util.CommonUtil.delay;
 
 @Slf4j
 public class FluxAndMonoGeneratorService {
@@ -398,6 +402,33 @@ public class FluxAndMonoGeneratorService {
                 }).log();
     }
 
+    public static List<String> names(){
+        delay(1000);
+        return List.of("alex","ben","chloe");
+    }
+
+    public Flux<String> explore_create(){
+        return Flux.create(stringFluxSink -> {
+
+            CompletableFuture.supplyAsync(() -> names())
+                            .thenAccept(names->{
+                                names.forEach(s -> {
+                                    stringFluxSink.next(s);
+                                    //stringFluxSink.next(s);
+                                } );
+                            })
+                            .thenRun(() -> sendEvents(stringFluxSink));
+        });
+    }
+
+    public void sendEvents(FluxSink<String> sink){
+
+            CompletableFuture.supplyAsync(() -> names())
+                    .thenAccept(names->{
+                        names.forEach(sink::next);
+                    })
+                    .thenRun(sink::complete);
+    }
 
     public Flux<String> splitString(String name){
         var charArray = name.split("");
