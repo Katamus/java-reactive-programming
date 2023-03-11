@@ -323,7 +323,10 @@ public class FluxAndMonoGeneratorServiceTest {
 
     @Test
     void explore_OnErrorMap(){
-        var value = fluxAndMonoGeneratorService.explore_OnErrorMap();
+
+        var e = new RuntimeException("Not a valid State");
+
+        var value = fluxAndMonoGeneratorService.explore_OnErrorMap(e);
         StepVerifier.create(value)
                 .expectNext("A")
                 .expectError(ReactorException.class)
