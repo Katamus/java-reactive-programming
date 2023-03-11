@@ -22,4 +22,17 @@ class MovieInfoServiceTest {
                 .expectNextCount(7)
                 .verifyComplete();
     }
+
+    @Test
+    void retrieveAMovieInfoById_RestClient() {
+
+        var movieInfoFlux = movieInfoService.retrieveAMovieInfoById_RestClient(1L)
+                .log();
+        StepVerifier.create(movieInfoFlux)
+                .assertNext(movieInfo ->
+                    assertEquals(1L, movieInfo.getMovieInfoId() )
+                )
+                .verifyComplete();
+
+    }
 }
